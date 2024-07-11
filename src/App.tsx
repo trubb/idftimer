@@ -29,9 +29,10 @@ export const TimeCtx = createContext<StandardTime>({
 
 function App() {
    const [arr, setArr] = useState<FireMission[]>([]);
+   const [dateTime, setDateTime] = useState<dayjs.Dayjs | null>(dayjs());
 
    return (
-      <TimeCtx.Provider value={{ dateTime: dayjs(), setDateTime: (_) => dayjs() }}>
+      <TimeCtx.Provider value={{ dateTime, setDateTime }}>
          <FireMissionCtx.Provider value={{ arr, setArr }}>
             <Container />
          </FireMissionCtx.Provider>
@@ -40,18 +41,12 @@ function App() {
 }
 export default App;
 
-// TODO set a global time that we base all other time on, to reflect ingame time
-// TODO make use of that
-
 // TODO play sound when timer reaches (nears) 0
 
 /*
-   set current time globally so that we can calculate the splash time
-   select HE || SMOKE via radio group
    input a time in minutes + seconds (time from shot to splash)
-       use a date-picker? https://mui.com/x/react-date-pickers/getting-started/
        do minus 5-10s to account for time required to switch from main pc to laptop?
-       Add "development" time for smoke as well on splashdown
+       Add "development" time for smoke as well on splashdown?
 
    render creation menu button and the list of timers
    display a mui "progress" component for each timer 
