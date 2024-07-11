@@ -1,10 +1,9 @@
-import { createContext, useEffect, useState, useContext } from "react";
-import "../App.css";
+import { useContext } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import CreationMenu from "./creationButton";
+import CreationButton from "./creationButton";
+import TimeButton from "./timeButton";
 
-import NewFireMission, { FireMission } from "./fireMission";
 
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -14,34 +13,24 @@ import Paper from "@mui/material/Paper";
 import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
 
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-
-import { Ctx } from "../App";
+import "../App.css";
+import { FireMissionCtx } from "../App";
+import NewFireMission from "./fireMission";
 
 export default function Container() {
-   const fmCtx = useContext(Ctx);
+   const fmCtx = useContext(FireMissionCtx);
 
-   var fireMissions = fmCtx.arr.map((fm) => {
-      console.log("fm in make fire missions: ", fm);
+   var fireMissions = fmCtx.arr.map((fm, idx) => {
       return (
-         <TableRow key={fm.splashTime?.toString()}>
-            <TableCell component="th" scope="row" className="target">
-               {fm.target}
-            </TableCell>
-            <TableCell component="th" scope="row" className="shellType">
-               {fm.shellType}
-            </TableCell>
-            <TableCell align="center" className="shellCount">
-               {fm.shellCount}
-            </TableCell>
-            <TableCell align="center" className="timeRemaining">
-               {fm.remainingTime}
-            </TableCell>
-            <TableCell align="center" className="splashTimeClock">
-               {dayjs(fm.splashTime).format("HH:MM:ss").toString()}
-            </TableCell>
-         </TableRow>
+         <NewFireMission
+            key={idx}
+            creationTime={fm.creationTime}
+            target={fm.target}
+            flightTimeMinutes={fm.flightTimeMinutes}
+            flightTimeSeconds={fm.flightTimeSeconds}
+            shellType={fm.shellType}
+            shellCount={fm.shellCount}
+         />
       );
    });
 
@@ -49,14 +38,17 @@ export default function Container() {
       <Box
          sx={{
             "& > :not(style)": { m: 1 },
-            bgcolor: "background.paper",
-            width: "100%",
+            bgcolor: "#123456",
+            width: "95%",
             flexGrow: 1,
          }}
       >
          <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-            <Grid item xs={12} textAlign={"center"}>
-               {<CreationMenu />}
+            <Grid item xs={6} textAlign={"center"}>
+               {<CreationButton />}
+            </Grid>
+            <Grid item xs={6} textAlign={"center"}>
+               {<TimeButton />}
             </Grid>
             <Grid item xs={12} textAlign={"center"}>
                <TableContainer component={Paper}>

@@ -1,76 +1,107 @@
-import React, { createContext, useEffect, useState, useContext } from "react";
-
-import NewFireMission, { FireMission } from "./fireMission";
-
+import React, { useState, useContext } from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import ScheduleSendIcon from "@mui/icons-material/ScheduleSend";
-
 import Switch from "@mui/material/Switch";
 import TextField from "@mui/material/TextField";
-
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
-
 import InputAdornment from "@mui/material/InputAdornment";
+import dayjs from "dayjs";
 
-import { Ctx } from "../App";
-import { ContactlessOutlined, SolarPower } from "@mui/icons-material";
+import { FireMissionCtx, TimeCtx } from "../App";
+import{ FireMission } from "./fireMission";
+import { time } from "console";
 
 interface CreationDialogProps {
    open: boolean;
-   set: React.Dispatch<React.SetStateAction<boolean>>;
+   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function CreationDialog(props: CreationDialogProps) {
-   const fmCtx = useContext(Ctx);
+   const fmCtx = useContext(FireMissionCtx);
+   const timeCtx = useContext(TimeCtx);
 
-   const { open, set: setOpen } = props;
+   const {open, setOpen} = props;
 
-   let [target, setTarget] = React.useState("");
-   let [shellType, setShellType] = React.useState("HE");
-   let [shellCount, setShellCount] = React.useState(0);
-   let [minutes, setMinutes] = React.useState(0);
-   let [seconds, setSeconds] = React.useState(0);
-   let [checked, setChecked] = React.useState(true);
+   let [shellTypeSwitch, setShellTypeSwitch] = useState(true);
+   let [shellType, setShellType] = useState("HE");
+
+   let [target, setTarget] = useState("");
+   let [targetError, setTargetError] = useState(false);
+
+   let [shellCount, setShellCount] = useState(0);
+   let [shellCountError, setShellCountError] = useState(false);
+
+   let [minutes, setMinutes] = useState(0);
+   let [minutesError, setMinutesError] = useState(false);
+
+   let [seconds, setSeconds] = useState(0);
+   let [secondsError, setSecondsError] = useState(false);
+
+   const resetErrors = () => {
+      setTargetError(false);
+      setShellCountError(false);
+      setMinutesError(false);
+      setSecondsError(false);
+   };
 
    const handleClose = () => {
       setOpen(false);
    };
-
+   
+   // create a new fire mission and add it to the fire mission context array
    const handleClickEnqueue = () => {
+      if (!(typeof target === "string" && target.length > 0)) {
+         setTargetError(true);
+         return;
+      }
+      if (!(typeof shellCount === "number" && shellCount > 0)) {
+         setShellCountError(true);
+         return;
+      }
+      if (!(typeof minutes === "number" && minutes >= 0)) {
+         setMinutesError(true);
+         return;
+      }
+      if (minutes === 0 && !(typeof seconds === "number" && seconds > 0)) {
+         setSecondsError(true);
+         return;
+      } else if (!(typeof seconds === "number" && seconds >= 0)) {
+         setSecondsError(true);
+         return;
+      }
+      if (minutes === 0 && seconds === 0) {
+         setMinutesError(true);
+         setSecondsError(true);
+         return;
+      }
+      resetErrors();
 
-      // TODO in here do the magic calculations to create the timer stuff
+      const fmTime = timeCtx.dateTime;
 
-      console.log("enqueueing fire mission");
-      var fm: FireMission = {
+      const fm: FireMission = {
+         creationTime: fmTime,
          target,
          shellType,
          shellCount,
          flightTimeMinutes: minutes,
          flightTimeSeconds: seconds,
+         splashTime: fmTime?.add(minutes, "minutes").add(seconds, "seconds"),
       };
-      console.log("fm in creationdialog: ", fm);
 
-      var arr = fmCtx.arr;
-      arr.push(fm);
-      fmCtx.setArr(arr);
+      console.log("new fire mission:", fm, "time", fmTime?.format("HH:mm:ss"));
+
+      fmCtx.setArr((old: FireMission[]) => [...old, fm]);
 
       setOpen(false);
    };
 
-   const handleSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      setChecked(event.target.checked);
-   };
-
-   // TODO why values not updatera?
    return (
       <Dialog
          fullWidth={true}
@@ -95,6 +126,7 @@ export default function CreationDialog(props: CreationDialogProps) {
                      onChange={(e) => {
                         setTarget(e.target.value);
                      }}
+                     error={targetError}
                   />
                </Stack>
 
@@ -103,16 +135,14 @@ export default function CreationDialog(props: CreationDialogProps) {
                   <Typography>Smoke</Typography>
                   <Switch
                      size="medium"
-                     checked={checked}
+                     checked={shellTypeSwitch}
                      onChange={() => {
-                        // TODO fucking radio buttons rather???
-                        setChecked(!checked);
-                        setShellType(checked ? "HE" : "Smoke");
-                        console.log("checked: ", checked);
+                        setShellTypeSwitch(!shellTypeSwitch);
+                        setShellType(shellTypeSwitch ? "HE" : "Smoke");
                      }}
                      inputProps={{ "aria-label": "controlled" }}
-                     color={checked ? "error" : "primary"}
-                     value={checked ? "HE" : "Smoke"}
+                     color={shellTypeSwitch ? "error" : "primary"}
+                     value={shellTypeSwitch ? "HE" : "Smoke"}
                   />
                   <Typography>HE</Typography>
                </Stack>
@@ -135,6 +165,7 @@ export default function CreationDialog(props: CreationDialogProps) {
                      onChange={(e) => {
                         setShellCount(parseInt(e.target.value));
                      }}
+                     error={shellCountError}
                   />
                </Stack>
 
@@ -153,6 +184,7 @@ export default function CreationDialog(props: CreationDialogProps) {
                      onChange={(e) => {
                         setMinutes(parseInt(e.target.value));
                      }}
+                     error={minutesError}
                   />
                   <TextField
                      id="outlined-basic"
@@ -167,6 +199,7 @@ export default function CreationDialog(props: CreationDialogProps) {
                      onChange={(e) => {
                         setSeconds(parseInt(e.target.value));
                      }}
+                     error={secondsError}
                   />
                </Stack>
             </FormControl>
