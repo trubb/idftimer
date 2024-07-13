@@ -12,11 +12,9 @@ import Typography from "@mui/material/Typography";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 import InputAdornment from "@mui/material/InputAdornment";
-import dayjs from "dayjs";
 
 import { FireMissionCtx, TimeCtx } from "../App";
-import{ FireMission } from "./fireMission";
-import { time } from "console";
+import { FireMission } from "./fireMission";
 
 interface CreationDialogProps {
    open: boolean;
@@ -27,10 +25,13 @@ export default function CreationDialog(props: CreationDialogProps) {
    const fmCtx = useContext(FireMissionCtx);
    const timeCtx = useContext(TimeCtx);
 
-   const {open, setOpen} = props;
+   const { open, setOpen } = props;
 
    let [shellTypeSwitch, setShellTypeSwitch] = useState(true);
    let [shellType, setShellType] = useState("HE");
+
+   let [gunTypeSwitch, setGunTypeSwitch] = useState(true);
+   let [gunType, setGunType] = useState("Mortar");
 
    let [target, setTarget] = useState("");
    let [targetError, setTargetError] = useState(false);
@@ -54,7 +55,7 @@ export default function CreationDialog(props: CreationDialogProps) {
    const handleClose = () => {
       setOpen(false);
    };
-   
+
    // create a new fire mission and add it to the fire mission context array
    const handleClickEnqueue = () => {
       if (!(typeof target === "string" && target.length > 0)) {
@@ -88,6 +89,7 @@ export default function CreationDialog(props: CreationDialogProps) {
       const fm: FireMission = {
          creationTime: fmTime,
          target,
+         gunType,
          shellType,
          shellCount,
          flightTimeMinutes: minutes,
@@ -120,7 +122,6 @@ export default function CreationDialog(props: CreationDialogProps) {
                   <TextField
                      id="outlined-basic"
                      variant="outlined"
-                     label="target"
                      defaultValue={""}
                      sx={{ maxWidth: "100%" }}
                      onChange={(e) => {
@@ -128,6 +129,24 @@ export default function CreationDialog(props: CreationDialogProps) {
                      }}
                      error={targetError}
                   />
+               </Stack>
+
+               <Stack direction="row" spacing={1} alignItems="center">
+                  <FormLabel id="shell-type">Shell Type</FormLabel>
+                  <Typography>Howitzer</Typography>
+                  <Switch
+                     size="medium"
+                     checked={gunTypeSwitch}
+                     onChange={() => {
+                        setGunTypeSwitch(!gunTypeSwitch);
+                        setGunType(gunTypeSwitch ? "Mortar" : "Howitzer");
+                        console.log("gunTypeSwitch", gunTypeSwitch, "gunType", gunType);
+                     }}
+                     inputProps={{ "aria-label": "controlled" }}
+                     color={gunTypeSwitch ? "error" : "primary"}
+                     value={gunTypeSwitch ? "Mortar" : "Howitzer"}
+                  />
+                  <Typography>Mortar</Typography>
                </Stack>
 
                <Stack direction="row" spacing={1} alignItems="center">
@@ -147,12 +166,11 @@ export default function CreationDialog(props: CreationDialogProps) {
                   <Typography>HE</Typography>
                </Stack>
 
-               <Stack direction="row" spacing={1} alignItems="center">
+               <Stack direction="row" spacing={1} alignItems="center" sx={{ margin: 1 }}>
                   <FormLabel id="time">Shell count</FormLabel>
                   <TextField
                      id="outlined-basic"
                      variant="outlined"
-                     label="shells"
                      defaultValue={0}
                      sx={{ maxWidth: "100%" }}
                      InputProps={{
@@ -169,12 +187,11 @@ export default function CreationDialog(props: CreationDialogProps) {
                   />
                </Stack>
 
-               <Stack direction="row" spacing={1} alignItems="center">
+               <Stack direction="row" spacing={1} alignItems="center" sx={{ margin: 1 }}>
                   <FormLabel id="time">Time to splash</FormLabel>
                   <TextField
                      id="outlined-basic"
                      variant="outlined"
-                     label="minutes"
                      defaultValue={0}
                      InputProps={{
                         endAdornment: (
@@ -189,7 +206,6 @@ export default function CreationDialog(props: CreationDialogProps) {
                   <TextField
                      id="outlined-basic"
                      variant="outlined"
-                     label="seconds"
                      defaultValue={0}
                      InputProps={{
                         endAdornment: (

@@ -1,10 +1,6 @@
 import { useContext } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import CreationButton from "./creationButton";
-import TimeButton from "./timeButton";
-
-
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
@@ -13,7 +9,9 @@ import Paper from "@mui/material/Paper";
 import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
 
-import "../App.css";
+import CreationButton from "./creationButton";
+import TimeButton from "./timeButton";
+import InfoButton from "./infoButton";
 import { FireMissionCtx } from "../App";
 import NewFireMission from "./fireMission";
 
@@ -24,12 +22,7 @@ export default function Container() {
       return (
          <NewFireMission
             key={idx}
-            creationTime={fm.creationTime}
-            target={fm.target}
-            flightTimeMinutes={fm.flightTimeMinutes}
-            flightTimeSeconds={fm.flightTimeSeconds}
-            shellType={fm.shellType}
-            shellCount={fm.shellCount}
+            {...fm}
          />
       );
    });
@@ -47,8 +40,11 @@ export default function Container() {
             <Grid item xs={6} textAlign={"center"}>
                {<CreationButton />}
             </Grid>
-            <Grid item xs={6} textAlign={"center"}>
+            <Grid item xs={4} textAlign={"center"}>
                {<TimeButton />}
+            </Grid>
+            <Grid item xs={2} textAlign={"center"}>
+               {<InfoButton />}
             </Grid>
             <Grid item xs={12} textAlign={"center"}>
                <TableContainer component={Paper}>
@@ -59,7 +55,10 @@ export default function Container() {
                               Target
                            </TableCell>
                            <TableCell sx={{ fontWeight: "bold" }}>
-                              Type
+                              Gun Type
+                           </TableCell>
+                           <TableCell sx={{ fontWeight: "bold" }}>
+                              Shell Type
                            </TableCell>
                            <TableCell
                               sx={{ fontWeight: "bold" }}

@@ -2,7 +2,6 @@ import { createContext, useState, Dispatch } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
-import "./App.css";
 import Container from "./components/container";
 import { FireMission } from "./components/fireMission";
 
@@ -40,14 +39,3 @@ function App() {
    );
 }
 export default App;
-
-// TODO play sound when timer reaches (nears) 0
-
-/*
-   input a time in minutes + seconds (time from shot to splash)
-       do minus 5-10s to account for time required to switch from main pc to laptop?
-       Add "development" time for smoke as well on splashdown?
-
-   render creation menu button and the list of timers
-   display a mui "progress" component for each timer 
-*/

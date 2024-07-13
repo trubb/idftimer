@@ -2,8 +2,8 @@ import React from "react";
 import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
 import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime"; 
-import utc from "dayjs/plugin/utc"; 
+import relativeTime from "dayjs/plugin/relativeTime";
+import utc from "dayjs/plugin/utc";
 import duration from "dayjs/plugin/duration"
 
 import Countdowner from "./countDowner";
@@ -17,6 +17,7 @@ export interface FireMission {
    target: string
    flightTimeMinutes: number;
    flightTimeSeconds: number;
+   gunType?: string;
    shellType?: string;
    shellCount?: number;
    splashTime?: dayjs.Dayjs;
@@ -25,22 +26,26 @@ export interface FireMission {
 
 export default function NewFireMission(fm: FireMission): React.ReactElement {
    var { flightTimeMinutes, flightTimeSeconds, creationTime } = fm;
-   
    var splashTime = creationTime?.add(flightTimeMinutes, "minutes").add(flightTimeSeconds, "seconds");
-
    var remainingTime = Countdowner(flightTimeMinutes, flightTimeSeconds);
 
    return (
       <TableRow
-         key={fm.target+fm.splashTime?.toString()}
+         key={fm.target + fm.splashTime?.toString()}
          sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
       >
          <TableCell component="th" scope="row" className="target">
-               {fm.target}
-            </TableCell>
+            {fm.target}
+         </TableCell>
+
+         <TableCell component="th" scope="row" className="guntype">
+            {fm.gunType}
+         </TableCell>
+
          <TableCell component="th" scope="row" className="shelltype">
             {fm.shellType}
          </TableCell>
+
          <TableCell
             component="th"
             scope="row"
@@ -49,11 +54,13 @@ export default function NewFireMission(fm: FireMission): React.ReactElement {
          >
             {fm.shellCount}
          </TableCell>
+
          <TableCell align="center" className="remaining"
-             sx={{display: 'flex', flexDirection: 'row', justifyContent: 'center', margin: 'auto', textAlign: 'center'}}
+            sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', margin: 'auto', textAlign: 'center' }}
          >
             {remainingTime}
          </TableCell>
+
          <TableCell align="center" id="splashtime">
             {splashTime?.format("HH:mm:ss")}
          </TableCell>
