@@ -1,5 +1,4 @@
 import React, { useState, useContext} from "react";
-import { flushSync } from "react-dom";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
