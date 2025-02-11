@@ -7,7 +7,7 @@ import CircularProgressWithLabel from "./progresser";
 
 // Countdowner takes time as a prop and will display the time remaining until that time is reached.
 export default function Countdowner(minutes: number, seconds: number): React.ReactElement {
-   var totalSeconds = (minutes * 60) + seconds;
+   const totalSeconds = (minutes * 60) + seconds;
    const [timeLeft, setTimeLeft] = useState(totalSeconds);
    const [progress, setProgress] = useState(0);
 
@@ -23,7 +23,7 @@ export default function Countdowner(minutes: number, seconds: number): React.Rea
       return () => {
          clearInterval(interval);
       };
-   }, [timeLeft]);
+   }, [timeLeft, totalSeconds]);
 
    if (timeLeft > 0) {
       return (

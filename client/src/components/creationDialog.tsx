@@ -1,4 +1,5 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext} from "react";
+import { flushSync } from "react-dom";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -88,20 +89,20 @@ export default function CreationDialog(props: CreationDialogProps) {
 
       const fm: FireMission = {
          creationTime: fmTime,
-         target,
-         gunType,
-         shellType,
-         shellCount,
+         target: target,
+         gunType: gunType,
+         shellType: shellType,
+         shellCount: shellCount,
          flightTimeMinutes: minutes,
          flightTimeSeconds: seconds,
          splashTime: fmTime?.add(minutes, "minutes").add(seconds, "seconds"),
       };
 
-      console.log("new fire mission:", fm, "time", fmTime?.format("HH:mm:ss"));
+      console.log("new fire mission:", JSON.stringify(fm), "time", fmTime?.format("HH:mm:ss"));
 
       fmCtx.setArr((old: FireMission[]) => [...old, fm]);
 
-      setOpen(false);
+      handleClose();
    };
 
    return (
@@ -132,14 +133,15 @@ export default function CreationDialog(props: CreationDialogProps) {
                </Stack>
 
                <Stack direction="row" spacing={1} alignItems="center">
-                  <FormLabel id="shell-type">Shell Type</FormLabel>
+                  <FormLabel id="gun-type">Gun Type</FormLabel>
                   <Typography>Howitzer</Typography>
                   <Switch
                      size="medium"
                      checked={gunTypeSwitch}
                      onChange={() => {
                         setGunTypeSwitch(!gunTypeSwitch);
-                        setGunType(gunTypeSwitch ? "Mortar" : "Howitzer");
+                        setGunType(current => current === "Howitzer" ? "Mortar" : "Howitzer");
+
                         console.log("gunTypeSwitch", gunTypeSwitch, "gunType", gunType);
                      }}
                      inputProps={{ "aria-label": "controlled" }}
@@ -156,8 +158,10 @@ export default function CreationDialog(props: CreationDialogProps) {
                      size="medium"
                      checked={shellTypeSwitch}
                      onChange={() => {
-                        setShellTypeSwitch(!shellTypeSwitch);
-                        setShellType(shellTypeSwitch ? "HE" : "Smoke");
+                        setShellTypeSwitch(current => current === true ? false : true);
+                        setShellType(current => current === "Smoke" ? "HE" : "Smoke");
+
+                        console.log("shellTypeSwitch", shellTypeSwitch, "shellType", shellType);
                      }}
                      inputProps={{ "aria-label": "controlled" }}
                      color={shellTypeSwitch ? "error" : "primary"}

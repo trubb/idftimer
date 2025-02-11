@@ -37,13 +37,10 @@ export default function Container() {
          }}
       >
          <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-            <Grid item xs={6} textAlign={"center"}>
-               {<CreationButton />}
-            </Grid>
-            <Grid item xs={4} textAlign={"center"}>
+            <Grid item xs={9} textAlign={"center"}>
                {<TimeButton />}
             </Grid>
-            <Grid item xs={2} textAlign={"center"}>
+            <Grid item xs={3} textAlign={"center"}>
                {<InfoButton />}
             </Grid>
             <Grid item xs={12} textAlign={"center"}>
@@ -83,6 +80,9 @@ export default function Container() {
                      <TableBody>{fireMissions}</TableBody>
                   </Table>
                </TableContainer>
+            </Grid>
+            <Grid item xs={12} textAlign={"center"}>
+               {<CreationButton />}
             </Grid>
          </Grid>
       </Box>
